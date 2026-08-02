@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,90 +23,84 @@
         }
     </script>
     <style>
-        .product-card {
-            transition: all 0.3s ease;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        .cart-item {
-            animation: slideIn 0.3s ease;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .dark-mode {
-            background-color: #1a202c;
-            color: white;
-        }
-        .dark-mode .bg-white {
-            background-color: #2d3748;
-            color: white;
-        }
-        .wishlist-active {
-            color: #ef4444 !important;
-        }
-        .glow-button {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-        }
+        .product-card { transition: all 0.3s ease; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .glow-button { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    
     <!-- Header -->
     <header class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-4">
                     <h1 class="text-2xl font-bold text-primary dark:text-blue-400">BHAVAY MARKETPLACE</h1>
-                    <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
+                    <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-xs md:text-sm font-medium">
                         <i class="fas fa-map-marker-alt mr-1"></i>Deliveries: Kamla Nagar, Agra
                     </span>
                 </div>
                 
-                <div class="flex-1 mx-8">
+                <div class="flex-1 w-full md:w-auto mx-0 md:mx-4">
                     <div class="relative">
                         <input type="text" id="searchInput" placeholder="Search web projects..." 
-                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
-                        <button onclick="searchProducts()" class="absolute right-2 top-2 text-gray-500 dark:text-gray-300">
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" onkeyup="searchProducts()">
+                        <button onclick="searchProducts()" class="absolute right-3 top-2.5 text-gray-500 dark:text-gray-300">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div class="flex items-center space-x-4">
-                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
+                <div class="flex items-center space-x-3 w-full md:w-auto justify-end">
+                    <!-- Mobile Login/Verification Box -->
+                    <div class="flex items-center bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
+                        <i class="fas fa-phone text-xs mx-2 text-gray-500 dark:text-gray-300"></i>
+                        <input type="text" id="userPhone" placeholder="Enter Mobile No." value="8218176013" class="w-28 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:text-white" />
+                        <button onclick="authenticateUser()" class="ml-1 bg-primary text-white text-xs px-2 py-1 rounded hover:bg-secondary">Login</button>
+                    </div>
+
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                         <i class="fas fa-moon dark:hidden"></i>
                         <i class="fas fa-sun hidden dark:block"></i>
                     </button>
                     
-                    <div class="relative">
-                        <button onclick="toggleCart()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 relative">
+                    <div class="relative user-only">
+                        <button onclick="toggleCart()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 relative text-gray-700 dark:text-gray-200">
                             <i class="fas fa-shopping-cart text-xl"></i>
                             <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                         </button>
                     </div>
-                    
-                    <nav class="hidden md:flex space-x-4">
-                        <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-blue-400">Home</a>
-                        <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-blue-400">Projects</a>
-                        <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-blue-400">Sell</a>
-                        <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-blue-400">Contact</a>
-                    </nav>
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- Creator Dashboard Toolbar -->
+    <section id="creatorDashboard" class="bg-blue-50 dark:bg-gray-800 py-4 border-b border-blue-200 dark:border-gray-700 hidden">
+        <div class="container mx-auto px-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-bold">CREATOR MODE</span>
+                <h3 class="text-lg font-bold text-primary dark:text-blue-400"><i class="fas fa-user-shield mr-2"></i>Admin & Creator Control Panel</h3>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <button onclick="openCreatorApprovals()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-yellow-600 transition-colors relative">
+                    <i class="fas fa-check-circle mr-1"></i> Allow Permission (<span id="pendingApprovalsCount">0</span>)
+                </button>
+                <button onclick="openCreatorPayments()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors">
+                    <i class="fas fa-wallet mr-1"></i> Total Earnings (20% Share)
+                </button>
+            </div>
+        </div>
+    </section>
+
     <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-primary to-secondary text-white py-16">
+    <section class="bg-gradient-to-r from-primary to-secondary text-white py-12 md:py-16">
         <div class="container mx-auto px-4 text-center">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">Web Development Marketplace</h2>
-            <p class="text-xl mb-8 max-w-2xl mx-auto">Buy and sell premium web projects, source code, and digital assets. Connect with talented developers in Kamla Nagar, Agra.</p>
+            <h2 class="text-3xl md:text-5xl font-bold mb-4">Web Development Marketplace</h2>
+            <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">Buy and sell premium web projects, source code, and digital assets. Connect with talented developers in Kamla Nagar, Agra.</p>
             <div class="space-x-4">
-                <button onclick="openListProjectModal()" class="glow-button bg-white text-primary px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                    <i class="fas fa-plus mr-2"></i>List Your Project
+                <button onclick="openUserPermissionModal()" class="glow-button bg-white text-primary px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-paper-plane mr-2"></i>Apply Your Project
                 </button>
                 <button onclick="scrollToProducts()" class="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary transition-colors">
                     Browse Projects
@@ -114,682 +109,330 @@
         </div>
     </section>
 
-    <!-- Calculator Section -->
-    <section class="py-8 bg-gray-100 dark:bg-gray-800">
-        <div class="container mx-auto px-4">
-            <div class="max-w-2xl mx-auto bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6">
-                <h3 class="text-xl font-bold mb-4 text-center">Seller Payout Calculator</h3>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <input type="number" id="salePrice" placeholder="Enter project price (₹)" 
-                           class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-600 dark:text-white">
-                    <button onclick="calculatePayout()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition-colors">
-                        Calculate Payout
-                    </button>
-                </div>
-                <div id="payoutResult" class="mt-4 text-center font-semibold text-gray-700 dark:text-gray-300"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Filter Buttons -->
-    <section class="py-6 bg-white dark:bg-gray-800 sticky top-16 z-40 shadow-md">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-wrap justify-center gap-2">
-                <button onclick="filterProducts('all')" class="filter-btn bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors">All Projects</button>
-                <button onclick="filterProducts('web-template')" class="filter-btn bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">Web Templates</button>
-                <button onclick="filterProducts('full-stack')" class="filter-btn bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">Full-Stack Apps</button>
-                <button onclick="filterProducts('ui-kit')" class="filter-btn bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">UI Kits</button>
-                <button onclick="resetFilters()" class="filter-btn bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">Reset Filters</button>
-            </div>
-        </div>
-    </section>
-
     <!-- Products Grid -->
     <section id="productsSection" class="py-12">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 text-center">Available Projects</h2>
+            <h2 class="text-3xl font-bold mb-8 text-center dark:text-white">Available Projects</h2>
             <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Products will be dynamically loaded here -->
+                <!-- Products loaded dynamically -->
             </div>
         </div>
     </section>
 
-    <!-- Cart Modal -->
-    <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-        <div class="fixed right-0 top-0 h-full w-full md:w-96 bg-white dark:bg-gray-800 shadow-xl transform transition-transform">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold">Shopping Cart</h3>
-                    <button onclick="closeCart()" class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div id="cartItems" class="space-y-4 max-h-96 overflow-y-auto">
-                    <!-- Cart items will appear here -->
-                </div>
-                
-                <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div class="flex justify-between text-lg font-bold mb-4">
-                        <span>Total:</span>
-                        <span id="cartTotal">₹0</span>
-                    </div>
-                    <button onclick="proceedToCheckout()" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-colors mb-2">
-                        Proceed to Checkout
-                    </button>
-                    <button onclick="clearCart()" class="w-full bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors">
-                        Clear Cart
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- List Project Modal -->
-    <div id="listProjectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <!-- USER PERMISSION REQUEST MODAL -->
+    <div id="userPermissionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="fixed inset-0 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold">List New Project</h3>
-                        <button onclick="closeListProjectModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    
-                    <form id="projectForm" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Project Title</label>
-                            <input type="text" id="projectTitle" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Description</label>
-                            <textarea id="projectDesc" required rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"></textarea>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Category</label>
-                            <select id="projectCategory" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
-                                <option value="">Select Category</option>
-                                <option value="web-template">Web Template</option>
-                                <option value="full-stack">Full-Stack App</option>
-                                <option value="ui-kit">UI Kit</option>
-                                <option value="plugin">Plugin</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Price (₹)</label>
-                            <input type="number" id="projectPrice" required min="1" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Preview URL</label>
-                            <input type="url" id="projectUrl" placeholder="https://example.com/demo" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Seller Name</label>
-                            <input type="text" id="sellerName" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
-                        </div>
-                        
-                        <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-colors">
-                            List Project
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Preview Modal -->
-    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50">
-        <div class="fixed inset-0 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl h-4/5">
-                <div class="p-4 flex justify-between items-center">
-                    <h3 id="previewTitle" class="text-xl font-bold">Project Preview</h3>
-                    <button onclick="closePreview()" class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white">
-                        <i class="fas fa-times"></i>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold dark:text-white">Apply Your Project</h3>
+                    <button onclick="closeUserPermissionModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
-                <iframe id="previewFrame" src="" class="w-full h-full border-0" sandbox="allow-scripts allow-same-origin"></iframe>
+                <form id="permissionForm" onsubmit="handleUserPermissionSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-200">Your Full Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="applicantName" required placeholder="उदा. राहुल शर्मा" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-200">Product / Project Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="applicantProductName" required placeholder="उदा. लीड पेंसिल का डब्बा" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-200">Description</label>
+                        <textarea id="applicantProductDesc" rows="3" placeholder="प्रोडक्ट की जानकारी लिखें..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-colors">
+                        Submit Application
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Checkout Modal -->
-    <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <!-- CREATOR APPROVALS MODAL -->
+    <div id="approvalsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="fixed inset-0 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold">Checkout</h3>
-                        <button onclick="closeCheckout()" class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    
-                    <div id="checkoutItems" class="mb-4"></div>
-                    
-                    <div class="space-y-3 mb-6">
-                        <div class="flex justify-between">
-                            <span>Subtotal:</span>
-                            <span id="checkoutSubtotal">₹0</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Platform Fee (10%):</span>
-                            <span id="platformFee">₹0</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Delivery:</span>
-                            <span>Free (Kamla Nagar, Agra)</span>
-                        </div>
-                        <div class="border-t border-gray-200 dark:border-gray-700 pt-2 flex justify-between font-bold text-lg">
-                            <span>Total:</span>
-                            <span id="checkoutTotal">₹0</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-1">Delivery Pincode</label>
-                        <input type="text" id="deliveryPincode" placeholder="Enter pincode" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
-                    </div>
-                    
-                    <button onclick="trackDelivery()" class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors mb-2">
-                        Track Delivery
-                    </button>
-                    
-                    <button onclick="confirmOrder()" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-colors">
-                        Confirm Order & Pay
-                    </button>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg p-6">
+                <div class="flex justify-between items-center mb-4 border-b pb-2 dark:border-gray-700">
+                    <h3 class="text-xl font-bold dark:text-white"><i class="fas fa-shield-alt text-yellow-500 mr-2"></i>Allow Permission Box</h3>
+                    <button onclick="closeApprovalsModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-300"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <div id="approvalsList" class="space-y-3 max-h-96 overflow-y-auto">
+                    <!-- Dynamic Requests Appear Here -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Success Modal -->
-    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-        <div class="fixed inset-0 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 text-center">
-                <i class="fas fa-check-circle text-green-500 text-5xl mb-4"></i>
-                <h3 class="text-2xl font-bold mb-2">Order Confirmed!</h3>
-                <p class="mb-4">Your order has been placed successfully.</p>
-                <div id="transactionDetails" class="text-left bg-gray-100 dark:bg-gray-700 p-4 rounded-lg mb-4">
-                    <p><strong>Transaction ID:</strong> <span id="transactionId"></span></p>
-                    <p><strong>Commission (10%):</strong> <span id="commissionAmount"></span></p>
-                    <p><strong>Seller Payout:</strong> <span id="sellerPayout"></span></p>
-                    <p><strong>Delivery ETA:</strong> 2-3 business days to Kamla Nagar, Agra</p>
-                </div>
-                <button onclick="closeSuccess()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition-colors">
-                    Continue Shopping
-                </button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Script Block -->
     <script>
-        // State Management
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        const CREATOR_PHONE = "8218176013";
+        let currentUserPhone = "8218176013"; 
+        let isCreator = true;
+
+        let cart = [];
+        
+        let applications = JSON.parse(localStorage.getItem('applications')) || [];
         let projects = JSON.parse(localStorage.getItem('projects')) || [
             {
                 id: 1,
-                title: "Modern E-commerce Dashboard",
-                description: "Complete admin dashboard with analytics and inventory management",
-                category: "full-stack",
-                price: 2999,
-                seller: "TechDev Solutions",
-                url: "https://example.com/demo1",
-                rating: 4.8,
-                image: "https://placehold.co/300x200"
-            },
-            {
-                id: 2,
-                title: "Responsive Portfolio Template",
-                description: "Beautiful portfolio template with smooth animations",
-                category: "web-template",
-                price: 1499,
-                seller: "DesignPro Studio",
-                url: "https://example.com/demo2",
-                rating: 4.6,
-                image: "https://placehold.co/300x200"
-            },
-            {
-                id: 3,
-                title: "React UI Component Library",
-                description: "Reusable React components with TypeScript support",
-                category: "ui-kit",
-                price: 3999,
-                seller: "CodeCrafters",
-                url: "https://example.com/demo3",
-                rating: 4.9,
-                image: "https://placehold.co/300x200"
-            },
-            {
-                id: 4,
-                title: "Node.js API Boilerplate",
-                description: "Production-ready API setup with authentication and database",
-                category: "full-stack",
-                price: 1999,
-                seller: "Backend Masters",
-                url: "https://example.com/demo4",
-                rating: 4.7,
-                image: "https://placehold.co/300x200"
-            },
-            {
-                id: 5,
-                title: "Landing Page Bundle",
-                description: "Collection of 10 premium landing page templates",
-                category: "web-template",
-                price: 2499,
-                seller: "TemplateHub",
-                url: "https://example.com/demo5",
-                rating: 4.5,
-                image: "https://placehold.co/300x200"
-            },
-            {
-                id: 6,
-                title: "E-commerce Plugin",
-                description: "WordPress plugin for online store functionality",
-                category: "plugin",
-                price: 2999,
-                seller: "PluginFactory",
-                url: "https://example.com/demo6",
-                rating: 4.8,
-                image: "https://placehold.co/300x200"
+                title: "लीड पेंसिल का डब्बा (Pencil Box)",
+                description: "High quality stationary product listing",
+                category: "stationary",
+                price: 299,
+                seller: "राहुल कुमार",
+                rating: 4.8
             }
         ];
 
-        // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            updateCartDisplay();
-            displayProducts(projects);
-            updateCartCount();
+            authenticateUser();
         });
 
-        // Product Display Functions
+        function authenticateUser() {
+            const phoneInput = document.getElementById('userPhone').value.trim();
+            currentUserPhone = phoneInput;
+            
+            if (currentUserPhone === CREATOR_PHONE) {
+                isCreator = true;
+                document.getElementById('creatorDashboard').classList.remove('hidden');
+            } else {
+                isCreator = false;
+                document.getElementById('creatorDashboard').classList.add('hidden');
+            }
+
+            displayProducts(projects);
+            updatePendingCount();
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+        }
+
         function displayProducts(productsToShow) {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
             
             productsToShow.forEach(project => {
-                const inWishlist = wishlist.includes(project.id);
+                // Filter only VALID requests having name
+                const appState = applications.find(a => 
+                    (a.projectId === project.id || a.productName === project.title) && 
+                    a.userPhone === currentUserPhone && 
+                    a.userName && a.userName.trim() !== ""
+                );
+                
                 const card = document.createElement('div');
-                card.className = 'product-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden';
-                card.innerHTML = `
-                    <img src="${project.image}" alt="${project.title}" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="font-bold text-lg mb-2">${project.title}</h3>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-2">${project.description}</p>
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-primary font-bold">₹${project.price.toLocaleString()}</span>
-                            <div class="flex items-center">
-                                <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                <span>${project.rating}</span>
+                card.className = 'product-card bg-white dark:bg-gray-700 p-5 rounded-lg shadow-md flex flex-col justify-between';
+                
+                let actionButtons = '';
+                
+                if (isCreator) {
+                    actionButtons = `
+                        <div class="flex flex-col gap-2 w-full mt-3">
+                            <span class="text-xs text-blue-600 dark:text-blue-300 font-bold bg-blue-100 dark:bg-blue-900 p-1.5 rounded text-center">
+                                Creator View Mode Enabled
+                            </span>
+                        </div>
+                    `;
+                } else {
+                    let applyStatusHtml = '';
+                    let isApproved = appState && appState.status === 'approved';
+
+                    if (!appState) {
+                        applyStatusHtml = `<button onclick="openUserPermissionModal('${project.title}')" class="w-full bg-yellow-500 text-white px-3 py-2 rounded text-sm font-semibold hover:bg-yellow-600 transition-colors">Apply Your Project</button>`;
+                    } else if (appState.status === 'pending') {
+                        applyStatusHtml = `<button disabled class="w-full bg-gray-400 text-white px-3 py-2 rounded text-sm cursor-not-allowed font-medium">Permission Pending...</button>`;
+                    } else if (appState.status === 'approved') {
+                        applyStatusHtml = `<span class="text-xs text-green-600 dark:text-green-400 font-bold block text-center py-1"><i class="fas fa-check-circle mr-1"></i> Permission Granted</span>`;
+                    } else if (appState.status === 'rejected') {
+                        applyStatusHtml = `<span class="text-xs text-red-500 font-bold block text-center py-1">Permission Rejected</span>`;
+                    }
+
+                    actionButtons = `
+                        <div class="flex flex-col gap-2 w-full mt-3">
+                            ${applyStatusHtml}
+                            <div class="flex gap-2">
+                                <button onclick="addToCart(${project.id})" ${!isApproved ? 'disabled' : ''} class="flex-1 bg-primary text-white px-3 py-2 rounded text-sm hover:bg-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                    Add to Cart
+                                </button>
+                                <button onclick="alert('Proceeding to Checkout!')" ${!isApproved ? 'disabled' : ''} class="flex-1 bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                    Buy Now
+                                </button>
                             </div>
                         </div>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-3">by ${project.seller}</p>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="addToCart(${project.id})" class="flex-1 bg-primary text-white px-3 py-2 rounded text-sm hover:bg-secondary transition-colors">
-                                Add to Cart
-                            </button>
-                            <button onclick="buyNow(${project.id})" class="flex-1 bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 transition-colors">
-                                Buy Now
-                            </button>
-                            <button onclick="toggleWishlist(${project.id})" class="flex-1 border border-gray-300 dark:border-gray-600 px-3 py-2 rounded text-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors ${inWishlist ? 'wishlist-active' : ''}">
-                                <i class="fas fa-heart ${inWishlist ? 'fill-current' : ''}"></i>
-                            </button>
-                            <button onclick="openPreview('${project.url}', '${project.title}')" class="flex-1 bg-gray-200 dark:bg-gray-600 px-3 py-2 rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors">
-                                Preview
-                            </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <h3 class="text-lg font-bold dark:text-white">${project.title}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">${project.description}</p>
+                        <div class="mt-3 flex justify-between items-center">
+                            <span class="text-xl font-bold text-primary dark:text-blue-400">₹${project.price}</span>
+                            <span class="text-xs bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded dark:text-gray-200">Seller: ${project.seller}</span>
                         </div>
                     </div>
+                    ${actionButtons}
                 `;
+                
                 grid.appendChild(card);
             });
         }
 
-        // Cart Functions
-        function addToCart(productId) {
-            const product = projects.find(p => p.id === productId);
-            if (!product) return;
-            
-            const existingItem = cart.find(item => item.id === productId);
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({...product, quantity: 1});
+        function openUserPermissionModal(productName = '') {
+            if(productName) {
+                document.getElementById('applicantProductName').value = productName;
             }
-            
-            updateCartDisplay();
-            updateCartCount();
-            saveCart();
-            showNotification(`${product.title} added to cart!`);
+            document.getElementById('userPermissionModal').classList.remove('hidden');
         }
 
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCartDisplay();
-            updateCartCount();
-            saveCart();
+        function closeUserPermissionModal() {
+            document.getElementById('userPermissionModal').classList.add('hidden');
         }
 
-        function clearCart() {
-            cart = [];
-            updateCartDisplay();
-            updateCartCount();
-            closeCart();
-            saveCart();
-            showNotification('Cart cleared!');
-        }
+        // STRICT VALIDATION ON SUBMIT
+        function handleUserPermissionSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('applicantName').value.trim();
+            const product = document.getElementById('applicantProductName').value.trim();
+            const desc = document.getElementById('applicantProductDesc').value.trim();
 
-        function updateCartCount() {
-            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cartCount').textContent = count;
-        }
-
-        function updateCartDisplay() {
-            const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
-            
-            if (cart.length === 0) {
-                cartItems.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">Your cart is empty</p>';
-                cartTotal.textContent = '₹0';
+            // Check: Naam hona mandatory hai
+            if(!name) {
+                alert("Kripya apna Naam likhein! Bina naam ke request nahi bheji ja sakti.");
                 return;
             }
-            
-            let total = 0;
-            cartItems.innerHTML = '';
-            
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                const cartItem = document.createElement('div');
-                cartItem.className = 'cart-item bg-gray-100 dark:bg-gray-600 p-3 rounded-lg';
-                cartItem.innerHTML = `
-                    <div class="flex justify-between items-start mb-2">
+
+            const newApp = {
+                id: Date.now(),
+                projectId: Date.now(),
+                userName: name,
+                userPhone: currentUserPhone,
+                productName: product,
+                description: desc,
+                status: 'pending'
+            };
+
+            applications.push(newApp);
+            localStorage.setItem('applications', JSON.stringify(applications));
+
+            // Dynamically create project listing if new
+            const exists = projects.some(p => p.title.toLowerCase() === product.toLowerCase());
+            if(!exists) {
+                projects.push({
+                    id: newApp.projectId,
+                    title: product,
+                    description: desc || 'Custom requested project',
+                    category: 'custom',
+                    price: 499,
+                    seller: name,
+                    rating: 5.0
+                });
+                localStorage.setItem('projects', JSON.stringify(projects));
+            }
+
+            // Reset form
+            document.getElementById('permissionForm').reset();
+            closeUserPermissionModal();
+            displayProducts(projects);
+            updatePendingCount();
+            alert("Aapki request Creator ko 'Allow Permission' ke liye bhej di gayi hai!");
+        }
+
+        function openCreatorApprovals() {
+            renderCreatorApprovals();
+            document.getElementById('approvalsModal').classList.remove('hidden');
+        }
+
+        function closeApprovalsModal() {
+            document.getElementById('approvalsModal').classList.add('hidden');
+        }
+
+        function renderCreatorApprovals() {
+            const list = document.getElementById('approvalsList');
+            list.innerHTML = '';
+
+            // Strict Filter: Sirf wo requests dikhao jinme valid Name maujood ho
+            const pendingApps = applications.filter(a => a.status === 'pending' && a.userName && a.userName.trim() !== "");
+
+            if (pendingApps.length === 0) {
+                list.innerHTML = `<p class="text-center text-gray-500 py-4">Koi bhi pending permission request nahi hai.</p>`;
+                return;
+            }
+
+            pendingApps.forEach(req => {
+                const item = document.createElement('div');
+                item.className = 'border border-blue-200 dark:border-gray-600 bg-blue-50 dark:bg-gray-700 p-4 rounded-lg flex flex-col gap-2';
+                item.innerHTML = `
+                    <div class="flex justify-between items-start">
                         <div>
-                            <h4 class="font-semibold">${item.title}</h4>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">₹${item.price} × ${item.quantity}</p>
+                            <p class="font-bold text-gray-800 dark:text-white"><i class="fas fa-user text-primary mr-1"></i> ${req.userName} <span class="text-xs text-gray-500 dark:text-gray-300">(${req.userPhone})</span></p>
+                            <p class="text-sm font-semibold text-blue-600 dark:text-blue-300 mt-1">Product Request: ${req.productName}</p>
+                            ${req.description ? `<p class="text-xs text-gray-600 dark:text-gray-300">Details: ${req.description}</p>` : ''}
                         </div>
-                        <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700">
-                            <i class="fas fa-trash"></i>
+                        <span class="bg-yellow-200 text-yellow-800 text-xs px-2 py-1 rounded font-bold">Pending</span>
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="approvePermission(${req.id})" class="flex-1 bg-green-600 text-white py-1.5 rounded text-sm font-bold hover:bg-green-700 transition-colors">
+                            <i class="fas fa-check mr-1"></i> Allow Permission
+                        </button>
+                        <button onclick="rejectPermission(${req.id})" class="bg-red-500 text-white px-3 py-1.5 rounded text-sm font-bold hover:bg-red-600 transition-colors">
+                            Reject
                         </button>
                     </div>
                 `;
-                cartItems.appendChild(cartItem);
+                list.appendChild(item);
             });
-            
-            cartTotal.textContent = `₹${total.toLocaleString()}`;
         }
 
-        function saveCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-        }
-
-        // Modal Functions
-        function toggleCart() {
-            document.getElementById('cartModal').classList.toggle('hidden');
-        }
-
-        function closeCart() {
-            document.getElementById('cartModal').classList.add('hidden');
-        }
-
-        function openListProjectModal() {
-            document.getElementById('listProjectModal').classList.remove('hidden');
-        }
-
-        function closeListProjectModal() {
-            document.getElementById('listProjectModal').classList.add('hidden');
-            document.getElementById('projectForm').reset();
-        }
-
-        function openPreview(url, title) {
-            if (!url) {
-                showNotification('No preview available for this project');
-                return;
-            }
-            document.getElementById('previewFrame').src = url;
-            document.getElementById('previewTitle').textContent = title;
-            document.getElementById('previewModal').classList.remove('hidden');
-        }
-
-        function closePreview() {
-            document.getElementById('previewModal').classList.add('hidden');
-            document.getElementById('previewFrame').src = '';
-        }
-
-        function proceedToCheckout() {
-            if (cart.length === 0) {
-                showNotification('Your cart is empty!');
-                return;
-            }
-            
-            const checkoutItems = document.getElementById('checkoutItems');
-            checkoutItems.innerHTML = '';
-            
-            let subtotal = 0;
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                subtotal += itemTotal;
-                
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'mb-2 pb-2 border-b border-gray-200 dark:border-gray-700';
-                itemDiv.innerHTML = `
-                    <div class="flex justify-between">
-                        <span>${item.title} (${item.quantity}×)</span>
-                        <span>₹${itemTotal.toLocaleString()}</span>
-                    </div>
-                `;
-                checkoutItems.appendChild(itemDiv);
-            });
-            
-            const platformFee = subtotal * 0.1;
-            const total = subtotal;
-            
-            document.getElementById('checkoutSubtotal').textContent = `₹${subtotal.toLocaleString()}`;
-            document.getElementById('platformFee').textContent = `₹${platformFee.toLocaleString()}`;
-            document.getElementById('checkoutTotal').textContent = `₹${total.toLocaleString()}`;
-            
-            document.getElementById('checkoutModal').classList.remove('hidden');
-        }
-
-        function closeCheckout() {
-            document.getElementById('checkoutModal').classList.add('hidden');
-        }
-
-        function confirmOrder() {
-            if (cart.length === 0) return;
-            
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const platformFee = subtotal * 0.1;
-            const transactionId = 'TXN' + Date.now().toString().slice(-8);
-            
-            document.getElementById('transactionId').textContent = transactionId;
-            document.getElementById('commissionAmount').textContent = `₹${platformFee.toLocaleString()}`;
-            document.getElementById('sellerPayout').textContent = `₹${(subtotal - platformFee).toLocaleString()}`;
-            
-            document.getElementById('checkoutModal').classList.add('hidden');
-            document.getElementById('successModal').classList.remove('hidden');
-            
-            // Clear cart after successful order
-            cart = [];
-            updateCartCount();
-            updateCartDisplay();
-            saveCart();
-        }
-
-        function closeSuccess() {
-            document.getElementById('successModal').classList.add('hidden');
-        }
-
-        // Filter Functions
-        function filterProducts(category) {
-            if (category === 'all') {
+        function approvePermission(appId) {
+            const req = applications.find(a => a.id === appId);
+            if (req) {
+                req.status = 'approved';
+                localStorage.setItem('applications', JSON.stringify(applications));
+                renderCreatorApprovals();
+                updatePendingCount();
                 displayProducts(projects);
-            } else {
-                const filtered = projects.filter(p => p.category === category);
-                displayProducts(filtered);
-            }
-            
-            // Update active filter button
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-primary', 'text-white');
-                btn.classList.add('bg-gray-200', 'dark:bg-gray-700');
-            });
-            
-            const activeBtn = Array.from(document.querySelectorAll('.filter-btn')).find(
-                btn => btn.textContent.toLowerCase().includes(category.replace('-', ' '))
-            );
-            
-            if (activeBtn) {
-                activeBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700');
-                activeBtn.classList.add('bg-primary', 'text-white');
+                alert(`Aapne ${req.userName} ko '${req.productName}' ke liye permission de di hai!`);
             }
         }
 
-        function resetFilters() {
-            displayProducts(projects);
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-primary', 'text-white');
-                btn.classList.add('bg-gray-200', 'dark:bg-gray-700');
-            });
-            document.querySelector('.filter-btn:first-child').classList.remove('bg-gray-200', 'dark:bg-gray-700');
-            document.querySelector('.filter-btn:first-child').classList.add('bg-primary', 'text-white');
+        function rejectPermission(appId) {
+            const req = applications.find(a => a.id === appId);
+            if (req) {
+                req.status = 'rejected';
+                localStorage.setItem('applications', JSON.stringify(applications));
+                renderCreatorApprovals();
+                updatePendingCount();
+                displayProducts(projects);
+            }
         }
 
-        // Utility Functions
+        function updatePendingCount() {
+            // Pending count strictly with valid user names
+            const pendingCount = applications.filter(a => a.status === 'pending' && a.userName && a.userName.trim() !== "").length;
+            document.getElementById('pendingApprovalsCount').innerText = pendingCount;
+        }
+
+        function searchProducts() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = projects.filter(p => p.title.toLowerCase().includes(term) || p.description.toLowerCase().includes(term));
+            displayProducts(filtered);
+        }
+
         function scrollToProducts() {
             document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        function addToCart(id) {
+            cart.push(id);
+            document.getElementById('cartCount').innerText = cart.length;
+            alert("Product cart mein add ho gaya hai!");
         }
 
-        function toggleWishlist(productId) {
-            const index = wishlist.indexOf(productId);
-            if (index > -1) {
-                wishlist.splice(index, 1);
-            } else {
-                wishlist.push(productId);
-            }
-            
-            localStorage.setItem('wishlist', JSON.stringify(wishlist));
-            displayProducts(projects); // Refresh to update wishlist icons
-        }
-
-        function buyNow(productId) {
-            const product = projects.find(p => p.id === productId);
-            if (!product) return;
-            
-            cart = [{...product, quantity: 1}];
-            updateCartDisplay();
-            updateCartCount();
-            saveCart();
-            proceedToCheckout();
-        }
-
-        function calculatePayout() {
-            const price = parseFloat(document.getElementById('salePrice').value);
-            if (isNaN(price) || price <= 0) {
-                showNotification('Please enter a valid price');
-                return;
-            }
-            
-            const platformFee = price * 0.1;
-            const sellerPayout = price - platformFee;
-            
-            document.getElementById('payoutResult').innerHTML = `
-                <div class="grid grid-cols-2 gap-4 mt-2">
-                    <div class="text-center">
-                        <p class="text-sm text-gray-600 dark:text-gray-300">Sale Price</p>
-                        <p class="text-lg font-bold">₹${price.toLocaleString()}</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-sm text-gray-600 dark:text-gray-300">Your Payout</p>
-                        <p class="text-lg font-bold text-green-600">₹${sellerPayout.toLocaleString()}</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function trackDelivery() {
-            const pincode = document.getElementById('deliveryPincode').value;
-            if (!pincode) {
-                showNotification('Please enter a pincode');
-                return;
-            }
-            
-            // Check if pincode corresponds to Kamla Nagar, Agra (hypothetical pincode: 282005)
-            if (['282005', '282001', '282002'].includes(pincode)) {
-                showNotification('✅ Delivery confirmed! ETA: 2-3 business days to Kamla Nagar, Agra');
-            } else {
-                showNotification('❌ Sorry! Deliveries are only available in Kamla Nagar, Agra area.');
-            }
-        }
-
-        function searchProducts() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            if (!searchTerm) {
-                displayProducts(projects);
-                return;
-            }
-            
-            const filtered = projects.filter(p => 
-                p.title.toLowerCase().includes(searchTerm) ||
-                p.description.toLowerCase().includes(searchTerm) ||
-                p.seller.toLowerCase().includes(searchTerm)
-            );
-            
-            displayProducts(filtered);
-        }
-
-        function showNotification(message) {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-pulse';
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // Form Submission
-        document.getElementById('projectForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const newProject = {
-                id: Date.now(),
-                title: document.getElementById('projectTitle').value,
-                description: document.getElementById('projectDesc').value,
-                category: document.getElementById('projectCategory').value,
-                price: parseInt(document.getElementById('projectPrice').value),
-                seller: document.getElementById('sellerName').value,
-                url: document.getElementById('projectUrl').value,
-                rating: 4.5, // Default rating
-                image: "https://placehold.co/300x200"
-            };
-            
-            projects.push(newProject);
-            localStorage.setItem('projects', JSON.stringify(projects));
-            
-            displayProducts(projects);
-            closeListProjectModal();
-            showNotification('Project listed successfully!');
-        });
-
-        // Load dark mode preference
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.documentElement.classList.add('dark');
+        function openCreatorPayments() {
+            alert("Total Creator Commission (20%): ₹" + (projects.reduce((acc, p) => acc + p.price, 0) * 0.20).toFixed(2));
         }
     </script>
 </body>
