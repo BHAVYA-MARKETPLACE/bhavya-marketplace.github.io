@@ -136,7 +136,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1 dark:text-gray-200">Product / Project Name <span class="text-red-500">*</span></label>
-                        <input type="text" id="applicantProductName" required placeholder="उदा. लीड पेंसिल का डब्बा" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                        <input type="text" id="applicantProductName" required placeholder="उदा. E-Commerce Web App" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1 dark:text-gray-200">Description</label>
@@ -177,10 +177,10 @@
         let projects = JSON.parse(localStorage.getItem('projects')) || [
             {
                 id: 1,
-                title: "लीड पेंसिल का डब्बा (Pencil Box)",
-                description: "High quality stationary product listing",
-                category: "stationary",
-                price: 299,
+                title: "Portfolio Website Template",
+                description: "Responsive developer portfolio with dark mode and contact form.",
+                category: "web",
+                price: 499,
                 seller: "राहुल कुमार",
                 rating: 4.8
             }
@@ -215,7 +215,6 @@
             grid.innerHTML = '';
             
             productsToShow.forEach(project => {
-                // Filter only VALID requests having name
                 const appState = applications.find(a => 
                     (a.projectId === project.id || a.productName === project.title) && 
                     a.userPhone === currentUserPhone && 
@@ -291,14 +290,12 @@
             document.getElementById('userPermissionModal').classList.add('hidden');
         }
 
-        // STRICT VALIDATION ON SUBMIT
         function handleUserPermissionSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('applicantName').value.trim();
             const product = document.getElementById('applicantProductName').value.trim();
             const desc = document.getElementById('applicantProductDesc').value.trim();
 
-            // Check: Naam hona mandatory hai
             if(!name) {
                 alert("Kripya apna Naam likhein! Bina naam ke request nahi bheji ja sakti.");
                 return;
@@ -317,7 +314,6 @@
             applications.push(newApp);
             localStorage.setItem('applications', JSON.stringify(applications));
 
-            // Dynamically create project listing if new
             const exists = projects.some(p => p.title.toLowerCase() === product.toLowerCase());
             if(!exists) {
                 projects.push({
@@ -332,7 +328,6 @@
                 localStorage.setItem('projects', JSON.stringify(projects));
             }
 
-            // Reset form
             document.getElementById('permissionForm').reset();
             closeUserPermissionModal();
             displayProducts(projects);
@@ -353,7 +348,6 @@
             const list = document.getElementById('approvalsList');
             list.innerHTML = '';
 
-            // Strict Filter: Sirf wo requests dikhao jinme valid Name maujood ho
             const pendingApps = applications.filter(a => a.status === 'pending' && a.userName && a.userName.trim() !== "");
 
             if (pendingApps.length === 0) {
@@ -410,7 +404,6 @@
         }
 
         function updatePendingCount() {
-            // Pending count strictly with valid user names
             const pendingCount = applications.filter(a => a.status === 'pending' && a.userName && a.userName.trim() !== "").length;
             document.getElementById('pendingApprovalsCount').innerText = pendingCount;
         }
