@@ -127,7 +127,7 @@
 
     <!-- DECORATIVE SLIDE-OVER SHOPPING CART DRAWER -->
     <div id="cartOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleCart()"></div>
-    <aside id="cartDrawer" class="cart-drawer fixed top-0 right-0 h-full w-full sm:w-96 bg-white dark:bg-gray-800 shadow-2xl z-50 flex flex-col translate-x-0">
+    <aside id="cartDrawer" class="cart-drawer fixed top-0 right-0 h-full w-full sm:w-96 bg-white dark:bg-gray-800 shadow-2xl z-50 flex flex-col translate-x-full">
         <!-- Cart Header -->
         <div class="p-5 bg-gradient-to-r from-primary to-blue-700 text-white flex items-center justify-between shadow-md">
             <div class="flex items-center space-x-3">
@@ -196,6 +196,24 @@
                         <label class="block text-sm font-medium mb-1 dark:text-gray-200">Description</label>
                         <textarea id="applicantProductDesc" rows="3" placeholder="प्रोडक्ट की जानकारी लिखें..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"></textarea>
                     </div>
+
+                    <!-- Add Picture Section -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-200">Product Photo</label>
+                        <button type="button" onclick="openImageSourceModal()" class="w-full border-2 border-dashed border-blue-400 hover:border-blue-600 text-blue-600 dark:text-blue-400 py-2.5 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 bg-blue-50 dark:bg-gray-700/50 hover:bg-blue-100 transition-colors">
+                            <i class="fas fa-camera text-lg"></i>
+                            <span>Add a Picture</span>
+                        </button>
+                        
+                        <!-- Image Preview Box -->
+                        <div id="imagePreviewContainer" class="hidden mt-3 relative">
+                            <img id="imagePreview" src="" alt="Product Preview" class="w-full h-36 object-cover rounded-lg border border-gray-300 dark:border-gray-600">
+                            <button type="button" onclick="removeSelectedImage()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors text-xs">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-colors">
                         Submit Application
                     </button>
@@ -203,6 +221,32 @@
             </div>
         </div>
     </div>
+
+    <!-- IMAGE SOURCE SELECTION MODAL (Camera / Gallery) -->
+    <div id="imageSourceModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50">
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-xs p-5 text-center">
+                <h4 class="text-lg font-bold dark:text-white mb-4">Select Image Option</h4>
+                <div class="space-y-3">
+                    <button type="button" onclick="triggerCameraInput()" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-colors flex items-center justify-center gap-3">
+                        <i class="fas fa-camera text-lg"></i>
+                        <span>Apply photo directly from camera</span>
+                    </button>
+                    <button type="button" onclick="triggerGalleryInput()" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center justify-center gap-3">
+                        <i class="fas fa-images text-lg"></i>
+                        <span>From Gallery</span>
+                    </button>
+                    <button type="button" onclick="closeImageSourceModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Input Controls for Camera and Gallery -->
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(event)">
+    <input type="file" id="galleryInput" accept="image/*" class="hidden" onchange="handleImageSelection(event)">
 
     <!-- CREATOR APPROVALS MODAL -->
     <div id="approvalsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
@@ -224,6 +268,7 @@
         const CREATOR_PHONE = "8218176013";
         let currentUserPhone = "8218176013"; 
         let isCreator = true;
+        let selectedProductImage = "";
 
         let cart = [];
         
@@ -236,7 +281,8 @@
                 category: "web",
                 price: 499,
                 seller: "राहुल कुमार",
-                rating: 4.8
+                rating: 4.8,
+                image: ""
             }
         ];
 
@@ -318,8 +364,12 @@
                     `;
                 }
 
+                // Render image if available
+                const imageHtml = project.image ? `<img src="${project.image}" alt="${project.title}" class="w-full h-40 object-cover rounded-md mb-3">` : '';
+
                 card.innerHTML = `
                     <div>
+                        ${imageHtml}
                         <h3 class="text-lg font-bold dark:text-white">${project.title}</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">${project.description}</p>
                         <div class="mt-3 flex justify-between items-center">
@@ -332,6 +382,46 @@
                 
                 grid.appendChild(card);
             });
+        }
+
+        /* --- CAMERA & GALLERY SELECTION LOGIC --- */
+        function openImageSourceModal() {
+            document.getElementById('imageSourceModal').classList.remove('hidden');
+        }
+
+        function closeImageSourceModal() {
+            document.getElementById('imageSourceModal').classList.add('hidden');
+        }
+
+        function triggerCameraInput() {
+            closeImageSourceModal();
+            document.getElementById('cameraInput').click();
+        }
+
+        function triggerGalleryInput() {
+            closeImageSourceModal();
+            document.getElementById('galleryInput').click();
+        }
+
+        function handleImageSelection(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedProductImage = e.target.result;
+                    document.getElementById('imagePreview').src = selectedProductImage;
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeSelectedImage() {
+            selectedProductImage = "";
+            document.getElementById('imagePreview').src = "";
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+            document.getElementById('cameraInput').value = "";
+            document.getElementById('galleryInput').value = "";
         }
 
         /* --- CART LOGIC & DECORATIVE EMPTY STATE MANAGEMENT --- */
@@ -464,6 +554,7 @@
                 userPhone: currentUserPhone,
                 productName: product,
                 description: desc,
+                image: selectedProductImage,
                 status: 'pending'
             };
 
@@ -479,12 +570,14 @@
                     category: 'custom',
                     price: 499,
                     seller: name,
-                    rating: 5.0
+                    rating: 5.0,
+                    image: selectedProductImage
                 });
                 localStorage.setItem('projects', JSON.stringify(projects));
             }
 
             document.getElementById('permissionForm').reset();
+            removeSelectedImage();
             closeUserPermissionModal();
             displayProducts(projects);
             updatePendingCount();
@@ -514,6 +607,9 @@
             pendingApps.forEach(req => {
                 const item = document.createElement('div');
                 item.className = 'border border-blue-200 dark:border-gray-600 bg-blue-50 dark:bg-gray-700 p-4 rounded-lg flex flex-col gap-2';
+                
+                const reqImageHtml = req.image ? `<img src="${req.image}" class="w-full h-24 object-cover rounded my-1 border">` : '';
+
                 item.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
@@ -523,6 +619,7 @@
                         </div>
                         <span class="bg-yellow-200 text-yellow-800 text-xs px-2 py-1 rounded font-bold">Pending</span>
                     </div>
+                    ${reqImageHtml}
                     <div class="flex gap-2 mt-2">
                         <button onclick="approvePermission(${req.id})" class="flex-1 bg-green-600 text-white py-1.5 rounded text-sm font-bold hover:bg-green-700 transition-colors">
                             <i class="fas fa-check mr-1"></i> Allow Permission
