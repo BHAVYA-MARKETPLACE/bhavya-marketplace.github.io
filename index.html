@@ -26,12 +26,17 @@
         .product-card { transition: all 0.3s ease; }
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
         .glow-button { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        
+        /* Smooth transition for side drawer */
+        .cart-drawer {
+            transition: transform 0.3s ease-in-out;
+        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300 relative overflow-x-hidden">
     
     <!-- Header -->
-    <header class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+    <header class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-40">
         <div class="container mx-auto px-4 py-4">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-4">
@@ -65,9 +70,10 @@
                     </button>
                     
                     <div class="relative user-only">
-                        <button onclick="toggleCart()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 relative text-gray-700 dark:text-gray-200">
-                            <i class="fas fa-shopping-cart text-xl"></i>
-                            <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                        <button onclick="toggleCart()" class="p-2 rounded-lg bg-primary text-white relative hover:bg-secondary transition-colors flex items-center space-x-2">
+                            <i class="fas fa-shopping-bag text-lg"></i>
+                            <span class="font-bold text-sm hidden sm:inline">Cart</span>
+                            <span id="cartCount" class="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
                         </button>
                     </div>
                 </div>
@@ -109,7 +115,7 @@
         </div>
     </section>
 
-    <!-- Products Grid -->
+    <!-- Products Grid Section -->
     <section id="productsSection" class="py-12">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold mb-8 text-center dark:text-white">Available Projects</h2>
@@ -118,6 +124,54 @@
             </div>
         </div>
     </section>
+
+    <!-- DECORATIVE SLIDE-OVER SHOPPING CART DRAWER -->
+    <div id="cartOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleCart()"></div>
+    <aside id="cartDrawer" class="cart-drawer fixed top-0 right-0 h-full w-full sm:w-96 bg-white dark:bg-gray-800 shadow-2xl z-50 flex flex-col translate-x-0">
+        <!-- Cart Header -->
+        <div class="p-5 bg-gradient-to-r from-primary to-blue-700 text-white flex items-center justify-between shadow-md">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2 rounded-lg">
+                    <i class="fas fa-shopping-basket text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg leading-tight">Your Cart</h3>
+                    <p class="text-xs text-blue-100">Bhavay Marketplace</p>
+                </div>
+            </div>
+            <button onclick="toggleCart()" class="text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Cart Body Content -->
+        <div id="cartContent" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <!-- Content will be rendered dynamically by JS -->
+        </div>
+
+        <!-- Cart Footer -->
+        <div id="cartFooter" class="p-5 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotal" class="font-semibold text-gray-800 dark:text-gray-200">₹0</span>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                    <span>Platform Fee</span>
+                    <span class="text-green-600 dark:text-green-400 font-semibold">FREE</span>
+                </div>
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-2 flex justify-between font-bold text-lg dark:text-white">
+                    <span>Total</span>
+                    <span id="cartTotal" class="text-primary dark:text-blue-400">₹0</span>
+                </div>
+            </div>
+            
+            <button id="checkoutBtn" onclick="alert('Proceeding to Checkout!')" class="w-full bg-gradient-to-r from-primary to-blue-600 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-blue-500/25 hover:from-blue-600 hover:to-blue-700 transition-all flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none" disabled>
+                <span>Proceed to Checkout</span>
+                <i class="fas fa-arrow-right text-sm"></i>
+            </button>
+        </div>
+    </aside>
 
     <!-- USER PERMISSION REQUEST MODAL -->
     <div id="userPermissionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
@@ -188,6 +242,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             authenticateUser();
+            updateCartUI();
         });
 
         function authenticateUser() {
@@ -255,7 +310,7 @@
                                 <button onclick="addToCart(${project.id})" ${!isApproved ? 'disabled' : ''} class="flex-1 bg-primary text-white px-3 py-2 rounded text-sm hover:bg-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                                     Add to Cart
                                 </button>
-                                <button onclick="alert('Proceeding to Checkout!')" ${!isApproved ? 'disabled' : ''} class="flex-1 bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                <button onclick="addToCart(${project.id}); toggleCart();" ${!isApproved ? 'disabled' : ''} class="flex-1 bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                                     Buy Now
                                 </button>
                             </div>
@@ -277,6 +332,107 @@
                 
                 grid.appendChild(card);
             });
+        }
+
+        /* --- CART LOGIC & DECORATIVE EMPTY STATE MANAGEMENT --- */
+        function toggleCart() {
+            const drawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('cartOverlay');
+            
+            if (drawer.classList.contains('translate-x-full')) {
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function addToCart(id) {
+            const item = cart.find(c => c.id === id);
+            if (item) {
+                item.qty += 1;
+            } else {
+                cart.push({ id: id, qty: 1 });
+            }
+            updateCartUI();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(c => c.id !== id);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartContent = document.getElementById('cartContent');
+            const cartCount = document.getElementById('cartCount');
+            const cartSubtotal = document.getElementById('cartSubtotal');
+            const cartTotal = document.getElementById('cartTotal');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+
+            const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+            cartCount.innerText = totalItems;
+
+            // Empty Cart - Decorative State
+            if (cart.length === 0) {
+                cartContent.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-center py-8 px-4">
+                        <div class="relative mb-6">
+                            <div class="w-24 h-24 bg-blue-50 dark:bg-gray-700/60 rounded-full flex items-center justify-center text-primary dark:text-blue-400 shadow-inner">
+                                <i class="fas fa-shopping-basket text-4xl"></i>
+                            </div>
+                            <span class="absolute -bottom-1 -right-1 bg-yellow-400 text-white p-2 rounded-full text-xs shadow-md">
+                                <i class="fas fa-sparkles"></i>
+                            </span>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Your Cart is Empty</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-6">
+                            Looks like you haven't added any web projects yet. Explore available templates to get started!
+                        </p>
+                        <div class="w-full space-y-3">
+                            <button onclick="toggleCart(); scrollToProducts();" class="w-full bg-primary/10 dark:bg-blue-900/40 text-primary dark:text-blue-300 font-semibold py-2.5 px-4 rounded-lg hover:bg-primary/20 transition-colors text-sm border border-primary/20">
+                                <i class="fas fa-compass mr-2"></i>Explore Projects
+                            </button>
+                        </div>
+                    </div>
+                `;
+                cartSubtotal.innerText = "₹0";
+                cartTotal.innerText = "₹0";
+                checkoutBtn.disabled = true;
+                return;
+            }
+
+            // Populated Cart Rendering
+            let totalPrice = 0;
+            let itemsHtml = '';
+
+            cart.forEach(cartItem => {
+                const project = projects.find(p => p.id === cartItem.id);
+                if (project) {
+                    const itemTotal = project.price * cartItem.qty;
+                    totalPrice += itemTotal;
+
+                    itemsHtml += `
+                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-between gap-3">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm text-gray-800 dark:text-white leading-tight">${project.title}</h4>
+                                <p class="text-xs text-primary dark:text-blue-400 font-semibold mt-1">₹${project.price} x ${cartItem.qty}</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="font-bold text-sm text-gray-900 dark:text-white">₹${itemTotal}</span>
+                                <button onclick="removeFromCart(${project.id})" class="text-red-400 hover:text-red-600 p-1">
+                                    <i class="fas fa-trash-alt text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            cartContent.innerHTML = itemsHtml;
+            cartSubtotal.innerText = `₹${totalPrice}`;
+            cartTotal.innerText = `₹${totalPrice}`;
+            checkoutBtn.disabled = false;
         }
 
         function openUserPermissionModal(productName = '') {
@@ -416,12 +572,6 @@
 
         function scrollToProducts() {
             document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function addToCart(id) {
-            cart.push(id);
-            document.getElementById('cartCount').innerText = cart.length;
-            alert("Product cart mein add ho gaya hai!");
         }
 
         function openCreatorPayments() {
