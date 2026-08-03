@@ -56,10 +56,10 @@
                 </div>
                 
                 <div class="flex items-center space-x-3 w-full md:w-auto justify-end">
-                    <!-- Mobile Login/Verification Box -->
+                    <!-- Mobile Login Box -->
                     <div class="flex items-center bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
                         <i class="fas fa-phone text-xs mx-2 text-gray-500 dark:text-gray-300"></i>
-                        <input type="text" id="userPhone" placeholder="Enter Mobile No." value="8218176013" class="w-28 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:text-white" />
+                        <input type="text" id="userPhone" placeholder="Enter Mobile No." value="" class="w-28 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:text-white" />
                         <button onclick="authenticateUser()" class="ml-1 bg-primary text-white text-xs px-2 py-1 rounded hover:bg-secondary">Login</button>
                     </div>
 
@@ -80,7 +80,7 @@
         </div>
     </header>
 
-    <!-- Creator Dashboard Toolbar -->
+    <!-- Creator Dashboard Toolbar (Hidden by Default) -->
     <section id="creatorDashboard" class="bg-blue-50 dark:bg-gray-800 py-4 border-b border-blue-200 dark:border-gray-700 hidden">
         <div class="container mx-auto px-4 flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center space-x-2">
@@ -124,10 +124,9 @@
         </div>
     </section>
 
-    <!-- DECORATIVE SLIDE-OVER SHOPPING CART DRAWER -->
+    <!-- CART DRAWER -->
     <div id="cartOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleCart()"></div>
     <aside id="cartDrawer" class="cart-drawer fixed top-0 right-0 h-full w-full sm:w-96 bg-white dark:bg-gray-800 shadow-2xl z-50 flex flex-col translate-x-full">
-        <!-- Cart Header -->
         <div class="p-5 bg-gradient-to-r from-primary to-blue-700 text-white flex items-center justify-between shadow-md">
             <div class="flex items-center space-x-3">
                 <div class="bg-white/20 p-2 rounded-lg">
@@ -143,12 +142,8 @@
             </button>
         </div>
 
-        <!-- Cart Body Content -->
-        <div id="cartContent" class="flex-1 overflow-y-auto p-4 space-y-4">
-            <!-- Content will be rendered dynamically by JS -->
-        </div>
+        <div id="cartContent" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
 
-        <!-- Cart Footer -->
         <div id="cartFooter" class="p-5 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
             <div class="space-y-2 mb-4">
                 <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
@@ -204,7 +199,6 @@
                         <textarea id="applicantProductDesc" rows="3" placeholder="प्रोडक्ट की जानकारी लिखें..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"></textarea>
                     </div>
 
-                    <!-- Add Picture Section -->
                     <div>
                         <label class="block text-sm font-medium mb-1 dark:text-gray-200">Product Photo</label>
                         <button type="button" onclick="openImageSourceModal()" class="w-full border-2 border-dashed border-blue-400 hover:border-blue-600 text-blue-600 dark:text-blue-400 py-2.5 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 bg-blue-50 dark:bg-gray-700/50 hover:bg-blue-100 transition-colors">
@@ -212,7 +206,6 @@
                             <span>Add a Picture</span>
                         </button>
                         
-                        <!-- Image Preview Box -->
                         <div id="imagePreviewContainer" class="hidden mt-3 relative">
                             <img id="imagePreview" src="" alt="Product Preview" class="w-full h-36 object-cover rounded-lg border border-gray-300 dark:border-gray-600">
                             <button type="button" onclick="removeSelectedImage()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors text-xs">
@@ -229,7 +222,7 @@
         </div>
     </div>
 
-    <!-- IMAGE SOURCE SELECTION MODAL (Camera / Gallery) -->
+    <!-- IMAGE SOURCE SELECTION MODAL -->
     <div id="imageSourceModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50">
         <div class="fixed inset-0 flex items-center justify-center p-4">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-xs p-5 text-center">
@@ -251,7 +244,6 @@
         </div>
     </div>
 
-    <!-- Hidden Input Controls for Camera and Gallery -->
     <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(event)">
     <input type="file" id="galleryInput" accept="image/*" class="hidden" onchange="handleImageSelection(event)">
 
@@ -263,9 +255,7 @@
                     <h3 class="text-xl font-bold dark:text-white"><i class="fas fa-shield-alt text-yellow-500 mr-2"></i>Allow Permission Box</h3>
                     <button onclick="closeApprovalsModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-300"><i class="fas fa-times text-xl"></i></button>
                 </div>
-                <div id="approvalsList" class="space-y-3 max-h-96 overflow-y-auto">
-                    <!-- Dynamic Requests Appear Here -->
-                </div>
+                <div id="approvalsList" class="space-y-3 max-h-96 overflow-y-auto"></div>
             </div>
         </div>
     </div>
@@ -273,12 +263,13 @@
     <!-- Script Block -->
     <script>
         const CREATOR_PHONE = "8218176013";
-        let currentUserPhone = "8218176013"; 
-        let isCreator = true;
-        let selectedProductImage = "";
-
-        let cart = [];
+        const CREATOR_SECRET_PIN = "1987"; // नया कठिन क्रिएटर पिन
         
+        let currentUserPhone = ""; 
+        let isCreator = false;
+        let selectedProductImage = "";
+        let cart = [];
+
         let applications = JSON.parse(localStorage.getItem('applications')) || [];
         let projects = JSON.parse(localStorage.getItem('projects')) || [
             {
@@ -294,17 +285,59 @@
         ];
 
         document.addEventListener('DOMContentLoaded', function() {
-            authenticateUser();
+            displayProducts(projects);
             updateCartUI();
         });
 
+        // डिवाइस सिग्नेचर वेरिफिकेशन (Oppo A3x / Trusted Device Control)
+        function checkCreatorDeviceSignature() {
+            const savedDeviceId = localStorage.getItem('creator_device_token');
+            
+            if (savedDeviceId === "OPPO_A3X_AUTHORIZED_DEVICE") {
+                return true;
+            }
+
+            const isConfirmedDevice = confirm("सुरक्षा जांच: क्या आप वाकई अपने Oppo A3x क्रिएटर मोबाइल से लॉगिन कर रहे हैं?");
+            if (isConfirmedDevice) {
+                localStorage.setItem('creator_device_token', 'OPPO_A3X_AUTHORIZED_DEVICE');
+                return true;
+            }
+            return false;
+        }
+
         function authenticateUser() {
             const phoneInput = document.getElementById('userPhone').value.trim();
+            
+            if (!phoneInput) {
+                alert("कृपया मोबाइल नंबर दर्ज करें!");
+                return;
+            }
+
             currentUserPhone = phoneInput;
             
             if (currentUserPhone === CREATOR_PHONE) {
-                isCreator = true;
-                document.getElementById('creatorDashboard').classList.remove('hidden');
+                
+                // 1. डिवाइस सुरक्षा जांच
+                const isTrustedDevice = checkCreatorDeviceSignature();
+                if (!isTrustedDevice) {
+                    alert("सुरक्षा चेतावनी: यह डिवाइस (Oppo A3x) ऑथराइज़्ड क्रिएटर मोबाइल नहीं है! क्रिएटर मोड ब्लॉक कर दिया गया है।");
+                    isCreator = false;
+                    document.getElementById('creatorDashboard').classList.add('hidden');
+                    displayProducts(projects);
+                    return;
+                }
+
+                // 2. नया पिन सुरक्षा जांच (1987)
+                const enteredPin = prompt("क्रिएटर सत्यापन: कृपया अपना सीक्रेट क्रिएटर पिन दर्ज करें:");
+                if (enteredPin === CREATOR_SECRET_PIN) {
+                    isCreator = true;
+                    document.getElementById('creatorDashboard').classList.remove('hidden');
+                    alert("क्रिएटर मोड सफलतापूर्वक अनलॉक हो गया है!");
+                } else {
+                    alert("गलत पिन! क्रिएटर एक्सेस अस्वीकृत।");
+                    isCreator = false;
+                    document.getElementById('creatorDashboard').classList.add('hidden');
+                }
             } else {
                 isCreator = false;
                 document.getElementById('creatorDashboard').classList.add('hidden');
@@ -400,7 +433,6 @@
             });
         }
 
-        /* --- CAMERA & GALLERY SELECTION LOGIC --- */
         function openImageSourceModal() {
             document.getElementById('imageSourceModal').classList.remove('hidden');
         }
@@ -440,7 +472,6 @@
             document.getElementById('galleryInput').value = "";
         }
 
-        /* --- CART LOGIC & DECORATIVE EMPTY STATE MANAGEMENT --- */
         function toggleCart() {
             const drawer = document.getElementById('cartDrawer');
             const overlay = document.getElementById('cartOverlay');
@@ -482,7 +513,6 @@
             const deliveryCharge = 10;
             const handlingCharge = 5;
 
-            // Empty Cart - Decorative State
             if (cart.length === 0) {
                 cartContent.innerHTML = `
                     <div class="flex flex-col items-center justify-center h-full text-center py-8 px-4">
@@ -490,19 +520,14 @@
                             <div class="w-24 h-24 bg-blue-50 dark:bg-gray-700/60 rounded-full flex items-center justify-center text-primary dark:text-blue-400 shadow-inner">
                                 <i class="fas fa-shopping-basket text-4xl"></i>
                             </div>
-                            <span class="absolute -bottom-1 -right-1 bg-yellow-400 text-white p-2 rounded-full text-xs shadow-md">
-                                <i class="fas fa-sparkles"></i>
-                            </span>
                         </div>
                         <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Your Cart is Empty</h4>
                         <p class="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-6">
-                            Looks like you haven't added any web projects yet. Explore available templates to get started!
+                            Looks like you haven't added any web projects yet.
                         </p>
-                        <div class="w-full space-y-3">
-                            <button onclick="toggleCart(); scrollToProducts();" class="w-full bg-primary/10 dark:bg-blue-900/40 text-primary dark:text-blue-300 font-semibold py-2.5 px-4 rounded-lg hover:bg-primary/20 transition-colors text-sm border border-primary/20">
-                                <i class="fas fa-compass mr-2"></i>Explore Projects
-                            </button>
-                        </div>
+                        <button onclick="toggleCart(); scrollToProducts();" class="w-full bg-primary/10 text-primary font-semibold py-2.5 px-4 rounded-lg hover:bg-primary/20 text-sm">
+                            Explore Projects
+                        </button>
                     </div>
                 `;
                 cartSubtotal.innerText = "₹0";
@@ -511,7 +536,6 @@
                 return;
             }
 
-            // Populated Cart Rendering
             let itemsSubtotal = 0;
             let itemsHtml = '';
 
@@ -564,7 +588,7 @@
             const desc = document.getElementById('applicantProductDesc').value.trim();
 
             if(!name) {
-                alert("Kripya apna Naam likhein! Bina naam ke request nahi bheji ja sakti.");
+                alert("Kripya apna Naam likhein!");
                 return;
             }
 
@@ -581,32 +605,45 @@
 
             applications.push(newApp);
             localStorage.setItem('applications', JSON.stringify(applications));
-
-            const exists = projects.some(p => p.title.toLowerCase() === product.toLowerCase());
-            if(!exists) {
-                projects.push({
-                    id: newApp.projectId,
-                    title: product,
-                    description: desc || 'Custom requested project',
-                    category: 'custom',
-                    price: 499,
-                    seller: name,
-                    rating: 5.0,
-                    image: selectedProductImage
-                });
-                localStorage.setItem('projects', JSON.stringify(projects));
-            }
-
-            document.getElementById('permissionForm').reset();
-            removeSelectedImage();
+            
+            alert("Application Submitted Successfully!");
             closeUserPermissionModal();
             displayProducts(projects);
             updatePendingCount();
-            alert("Aapki request Creator ko 'Allow Permission' ke liye bhej di gayi hai!");
+        }
+
+        function updatePendingCount() {
+            const count = applications.filter(a => a.status === 'pending').length;
+            const pendingEl = document.getElementById('pendingApprovalsCount');
+            if(pendingEl) pendingEl.innerText = count;
         }
 
         function openCreatorApprovals() {
-            renderCreatorApprovals();
+            const list = document.getElementById('approvalsList');
+            const pendingApps = applications.filter(a => a.status === 'pending');
+            
+            list.innerHTML = '';
+
+            if (pendingApps.length === 0) {
+                list.innerHTML = `<p class="text-gray-500 text-center py-4">No pending permissions.</p>`;
+            } else {
+                pendingApps.forEach(app => {
+                    const item = document.createElement('div');
+                    item.className = 'p-3 bg-gray-100 dark:bg-gray-700 rounded-lg flex justify-between items-center';
+                    item.innerHTML = `
+                        <div>
+                            <p class="font-bold dark:text-white">${app.userName} (${app.userPhone})</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-300">Project: ${app.productName}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="updateStatus(${app.id}, 'approved')" class="bg-green-500 text-white text-xs px-2 py-1 rounded">Approve</button>
+                            <button onclick="updateStatus(${app.id}, 'rejected')" class="bg-red-500 text-white text-xs px-2 py-1 rounded">Reject</button>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            }
+
             document.getElementById('approvalsModal').classList.remove('hidden');
         }
 
@@ -614,56 +651,19 @@
             document.getElementById('approvalsModal').classList.add('hidden');
         }
 
-        function renderCreatorApprovals() {
-            const list = document.getElementById('approvalsList');
-            list.innerHTML = '';
-
-            const pendingApps = applications.filter(a => a.status === 'pending');
-            if (pendingApps.length === 0) {
-                list.innerHTML = `<p class="text-center text-gray-500 py-4">No pending approvals.</p>`;
-                return;
-            }
-
-            pendingApps.forEach(app => {
-                const item = document.createElement('div');
-                item.className = 'p-3 border rounded-lg dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex justify-between items-center';
-                item.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-sm dark:text-white">${app.productName}</h4>
-                        <p class="text-xs text-gray-500 dark:text-gray-300">By: ${app.userName} (${app.userPhone})</p>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button onclick="updateAppStatus(${app.id}, 'approved')" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-green-700">Approve</button>
-                        <button onclick="updateAppStatus(${app.id}, 'rejected')" class="bg-red-600 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-red-700">Reject</button>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function updateAppStatus(id, status) {
+        function updateStatus(id, newStatus) {
             const app = applications.find(a => a.id === id);
-            if (app) {
-                app.status = status;
+            if(app) {
+                app.status = newStatus;
                 localStorage.setItem('applications', JSON.stringify(applications));
-                renderCreatorApprovals();
-                updatePendingCount();
+                openCreatorApprovals();
                 displayProducts(projects);
-            }
-        }
-
-        function updatePendingCount() {
-            const count = applications.filter(a => a.status === 'pending').length;
-            const pendingBadge = document.getElementById('pendingApprovalsCount');
-            if (pendingBadge) {
-                pendingBadge.innerText = count;
+                updatePendingCount();
             }
         }
 
         function openCreatorPayments() {
-            let totalRevenue = projects.reduce((acc, p) => acc + p.price, 0);
-            let creatorShare = totalRevenue * 0.20;
-            alert(`Total Platform Revenue: ₹${totalRevenue}\nYour 20% Earnings Share: ₹${creatorShare.toFixed(2)}`);
+            alert("Total Creator Earnings: 20% commission on overall project sales.");
         }
     </script>
 </body>
